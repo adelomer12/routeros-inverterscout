@@ -1,0 +1,33 @@
+# RouterOS /app definition for InverterScout
+# Requires: RouterOS 7.22+, container package, ARM64, external storage for layers/volumes.
+# Deploy like any custom /app (WinBox/WebFig: App -> Add, paste this YAML).
+#
+# PORTS - do NOT prefix the port with an IP address:
+#   "192.168.88.1:8088:8080/tcp:web" is mis-parsed by /app (host port becomes "192").
+#   /app binds published ports to [routerIP] on its own.
+# Pick a host port no other /app already publishes on the router IP:
+#   /ip firewall nat print where dst-port~"8088"
+#
+# IMAGE - use your own arm64 build (see README), or this public one.
+
+name: inverterscout
+descr: LuxPower SNA read-only monitor + Telegram alerts
+category: monitoring
+services:
+  inverterscout:
+    image: ghcr.io/adelomer12/inverterscout:v0.1.0-arm64
+    container_name: inverterscout
+    hostname: inverterscout
+    restart: unless-stopped
+    user: "10001:10001"
+    environment:
+      TZ: Etc/UTC                      # set your IANA time zone
+      INVERTERSCOUT_DATA_DIR: /app/data
+      # Do NOT set INVERTERSCOUT_MASTER_KEY here: /app YAML is part of the
+      # router configuration and would appear in every /export.
+    ports:
+      - "8088:8080/tcp:web"
+    volumes:
+      - inverterscout-data:/app/data
+volumes:
+  inverterscout-data: {}
