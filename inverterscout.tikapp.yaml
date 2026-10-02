@@ -15,7 +15,7 @@ descr: LuxPower SNA read-only monitor + Telegram alerts
 category: monitoring
 services:
   inverterscout:
-    image: ghcr.io/adelomer12/inverterscout:v0.1.0-arm64
+    image: ghcr.io/adelomer12/inverterscout:v0.1.1-arm64
     container_name: inverterscout
     hostname: inverterscout
     restart: unless-stopped
